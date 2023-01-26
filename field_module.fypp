@@ -15,6 +15,10 @@ MODULE FIELD_MODULE
 USE PARKIND1, ONLY: JPIM, JPRB
 USE OMP_LIB, ONLY: OMP_GET_MAX_THREADS, OMP_GET_THREAD_NUM
 USE IEEE_ARITHMETIC, ONLY: IEEE_SIGNALING_NAN
+#ifdef PINNED
+USE, INTRINSIC :: ISO_C_BINDING
+USE CUDAFOR
+#endif /* PINNED */
 
 IMPLICIT NONE
 
@@ -90,6 +94,9 @@ TYPE, ABSTRACT, EXTENDS (FIELD_BASIC) :: ${field_type_name}$
   ! a contiguous chunk of host memory to cleanly map to
   ! device, should the %DATA pointer be discontiguous.
   ${dtype}$, POINTER, CONTIGUOUS :: DEVPTR(${shapes[rank]}$) => NULL()
+#ifdef PINNED
+  TYPE(C_PTR) :: C_DEVPTR
+#endif /* PINNED */
 
 CONTAINS
 
@@ -241,12 +248,18 @@ CONTAINS
   SUBROUTINE ${field_type_name}$_DELETE_DEVICE(SELF)
     ! Delete the copy of this field on GPU device
     CLASS(${field_type_name}$) :: SELF
+    INTEGER :: ISTAT
 
     IF (ASSOCIATED (SELF%DEVPTR)) THEN
 #ifdef _OPENACC
       !$acc exit data delete (SELF%DEVPTR)
 #endif /* _OPENACC */
+#ifdef PINNED
+      ISTAT = CUDAFREEHOST(SELF%C_DEVPTR)
+      NULLIFY(SELF%DEVPTR)
+#else
       DEALLOCATE (SELF%DEVPTR)
+#endif /* PINNED */
       NULLIFY (SELF%DEVPTR)
     ENDIF
   END SUBROUTINE ${field_type_name}$_DELETE_DEVICE
@@ -478,12 +491,19 @@ CONTAINS
 
   SUBROUTINE ${field_type_name}$_CREATE_DEVICE_DATA (SELF)
     CLASS(${field_type_name}$), INTENT (INOUT) :: SELF
+#ifdef PINNED
+    INTEGER :: ISTAT
+    ISTAT = CUDAHOSTALLOC(SELF%C_DEVPTR, SIZEOF(SELF%PTR), CUDAHOSTALLOCMAPPED)
+    CALL C_F_POINTER(SELF%C_DEVPTR, SELF%DEVPTR,(/${ ', '.join (map (lambda i: 'SIZE(SELF%PTR,' + str (i) + ')', range (1, rank+1))) }$/))
+#else
 #if __INTEL_COMPILER == 1800 && __INTEL_COMPILER_UPDATE == 5
 ! Bug with Intel 18.0.5.274
     ALLOCATE (SELF%DEVPTR (${ ', '.join (map (lambda i: 'LBOUND (SELF%PTR, ' + str (i) + '):UBOUND (SELF%PTR,' + str (i) + ')', range (1, rank+1))) }$))
 #else
     ALLOCATE (SELF%DEVPTR, MOLD=SELF%PTR)
-#endif
+#endif /* intel bug */
+#endif /* PINNED */
+
 #ifdef _OPENACC
     !$acc enter data create (SELF%DEVPTR)
     IF (SELF%LOBJECT_COPIED) THEN
