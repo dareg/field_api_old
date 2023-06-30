@@ -38,6 +38,7 @@ if (fiat_HAVE_DOUBLE_PRECISION)
 elseif (fiat_HAVE_SINGLE_PRECISION)
   set (CMAKE_Fortran_FLAGS "${CMAKE_Fortran_FLAGS} -I${fiat_BASE_DIR}/module/parkind_sp")
 endif ()
+message(STATUS "${CMAKE_Fortran_FLAGS}")
 
 if (NOT FYPP_PATH)
 	find_program (FYPP fypp)
