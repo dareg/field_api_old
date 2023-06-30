@@ -24,6 +24,7 @@ jobs:
     - name: Install fiat
       run: |
         git clone https://github.com/ecmwf-ifs/fiat
+        cd fiat
         mkdir build && cd build
         cmake ..
   build:
