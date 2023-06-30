@@ -21,6 +21,16 @@ jobs:
         architecture: 'x64' # optional x64 or x86. Defaults to x64 if not specified
     - run: pip install fypp
 
+    - name: Install ecbuild
+      run: git clone https://github.com/ecmwf/ecbuild
+      run: export PATH=$PWD/ecbuild/bin:$PATH
+
+    - name: Install fiat
+      run: git clone https://github.com/ecmwf-ifs/fiat
+      run: mkdir build && cd build
+      run: cmake ..
+
+
     - name: Configure CMake
       # Configure CMake in a 'build' subdirectory. `CMAKE_BUILD_TYPE` is only required if you are using a single-configuration generator such as make.
       # See https://cmake.org/cmake/help/latest/variable/CMAKE_BUILD_TYPE.html?highlight=cmake_build_type
