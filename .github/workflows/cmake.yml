@@ -32,10 +32,6 @@ jobs:
         make
         make install
 
-        #cmake -B ${{github.workspace}}/fiat/build -DCMAKE_BUILD_TYPE=${{env.BUILD_TYPE}} -DCMAKE_INSTALL_PREFIX=${{github.workspace}}/fiat/install
-        #cmake --build ${{github.workspace}}/fiat/build --config ${{env.BUILD_TYPE}}
-        #cmake --install ${{github.workspace}}/fiat/build
-
     - name: Build field_api
       run: |
         export fiat_DIR=${{github.workspace}}/fiat/install

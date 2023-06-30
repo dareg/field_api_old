@@ -31,6 +31,7 @@ endif ()
 find_package (fiat REQUIRED) 
 
 set (CMAKE_Fortran_FLAGS "${CMAKE_Fortran_FLAGS} -I${fiat_BASE_DIR}/module/fiat -I${fiat_BASE_DIR}/include/fiat")
+set (CMAKE_Fortran_FLAGS "${CMAKE_Fortran_FLAGS} -L${fiat_BASE_DIR}/lib -lfiat -Wl,-rpath,${fiat_BASE_DIR}/lib")
 set (CMAKE_Fortran_FLAGS "${CMAKE_Fortran_FLAGS} -L${fiat_BASE_DIR}/lib64 -lfiat -Wl,-rpath,${fiat_BASE_DIR}/lib64")
 
 if (fiat_HAVE_DOUBLE_PRECISION)
