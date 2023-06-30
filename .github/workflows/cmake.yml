@@ -22,11 +22,13 @@ jobs:
     - run: pip install fypp
 
     - name: Install ecbuild
-      run: git clone https://github.com/ecmwf/ecbuild
+      run: |
+        git clone https://github.com/ecmwf/ecbuild
         export PATH=$PWD/ecbuild/bin:$PATH
 
     - name: Install fiat
-      run: git clone https://github.com/ecmwf-ifs/fiat
+      run: |
+        git clone https://github.com/ecmwf-ifs/fiat
         mkdir build && cd build
         cmake ..
 
