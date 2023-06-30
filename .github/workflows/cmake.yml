@@ -31,7 +31,7 @@ jobs:
         cmake ..  -DCMAKE_INSTALL_PREFIX=${{github.workspace}}/fiat/install
         make
         make install
-        ls install/module/ install/lib/
+        find ../install
 
     - name: Build field_api
       run: |
