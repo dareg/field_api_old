@@ -48,6 +48,7 @@ set(TEST_FILES
 	no_transfer_get_host.F90
 	pointer_to_owner_wrapper.F90
 	resize_owner.F90
+	resize_owner2.F90
 	sync_device.F90
 	sync_host.F90
 	test_crc64.F90
@@ -55,6 +56,7 @@ set(TEST_FILES
 	)
 
 set(FAILING_TEST_FILES
+	resize_wrapper.F90
 	)
 
 #These tests will call abor1
