@@ -7,6 +7,9 @@ The API is using fypp heavily to generate the code for several types and
 dimensions. It might look complicated, but if you are just using the API then
 you should not worry about it.
 
+[Compilation instructions](#Compilation)
+[Field API types](#Field-API-types)
+
 # Compilation
 
 Field API can be compiled as an external library or just dropped into the
